@@ -37,7 +37,6 @@
 
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            @if ($product->has_variants === 1)
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
@@ -68,7 +67,7 @@
                                                     <div class="d-flex flex-column justify-content-center">
                                                         <h6 class="mb-0 text-sm">{{ $variation->variant_name }}</h6>
                                                         <p class="text-xs text-secondary mb-0">
-                                                            {{ number_format($variation->price, 0, '.', '.') }} VND</p>
+                                                            {{ number_format($variation->price, 0, '.', '.') }} ₫</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -89,9 +88,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>    
-                            @endif
-                          
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -167,7 +164,6 @@
                                     @endif
                                 @endforeach
                             </div>
-                            @if ($product->has_variants === 1)
                             <div class="row mb-3">
                                 @php
                                     $displayedColors = [];
@@ -193,9 +189,7 @@
                                         @endphp
                                     @endif
                                 @endforeach
-                            </div>  
-                            @endif
-                         
+                            </div>
                             <p class="mb-1">Kho: <span id="product-stock">{{ $product->total_stock }}</span></p>
                             <p>{!! $product->short_description !!}</p>
                         </div>
@@ -203,9 +197,12 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-7">
-                        {{-- description  --}}
-                        <p>{!! $product->long_description !!}</p>
-                        {{-- description  --}}
+                        <div id="product-description" class="short-description">
+                            {!! $product->long_description !!}
+                        </div>
+                        <div class="text-center">
+                            <button id="toggle-description" class="btn btn-primary p-0">Xem thêm</button>
+                        </div>
                     </div>
                     <div class="col-md-5">
                         <p>{!! $product->specifications !!}</p>
@@ -217,8 +214,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggle-description');
+            const description = document.getElementById('product-description');
             const variants = @json($product->variants);
 
+            toggleBtn.addEventListener('click', function() {
+                description.classList.toggle('expanded-description');
+                if (description.classList.contains('expanded-description')) {
+                    toggleBtn.textContent = 'Thu gọn';
+                } else {
+                    toggleBtn.textContent = 'Xem thêm';
+                }
+            });
             document.querySelectorAll('.option, .color-option').forEach(option => {
                 option.addEventListener('click', function() {
                     if (option.classList.contains('option')) {
@@ -246,7 +253,7 @@
 
                         if (selectedVariant) {
                             document.getElementById('product-price').textContent = new Intl
-                                .NumberFormat().format(selectedVariant.price) + ' VND';
+                                .NumberFormat().format(selectedVariant.price) + ' ₫';
                             document.getElementById('product-stock').textContent = selectedVariant
                                 .stock;
                         }

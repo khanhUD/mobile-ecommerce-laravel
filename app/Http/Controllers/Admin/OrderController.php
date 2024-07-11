@@ -11,10 +11,10 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Hóa đơn | Admin KhanhUD Moblie';
+        $title = 'Hóa đơn | Admin KhanhUD Mobile';
         $search = $request->input('search');
         $status = $request->input('status');
-
+    
         $orders = Order::query()
             ->when($search, function ($query, $search) {
                 $query->where('order_code', 'like', '%' . $search . '%')
@@ -24,10 +24,12 @@ class OrderController extends Controller
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
             ->paginate(10);
-
-        return view('pages.admin.orders.index', compact('orders','title'));
+    
+        return view('pages.admin.orders.index', compact('orders', 'title'));
     }
+    
 
     public function show($id)
     {

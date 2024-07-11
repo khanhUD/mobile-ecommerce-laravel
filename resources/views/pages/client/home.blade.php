@@ -13,10 +13,6 @@
             @foreach ($banners as $key => $banner)
                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                     <img src="{{ asset('images/' . $banner->image) }}" class="d-block w-100" alt="{{ $banner->title }}">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>{{ $banner->title }}</h5>
-                        <p>{{ $banner->description }}</p>
-                    </div>
                 </div>
             @endforeach
         </div>

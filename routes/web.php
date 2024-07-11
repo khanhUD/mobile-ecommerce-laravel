@@ -64,10 +64,10 @@ Route::middleware(['auth',])->group(function () {
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     // Thanh toán 
     Route::get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/thanh-toan', [CheckoutController::class, 'processOrder'])->name('checkout.process');
-    Route::get('/api/provinces', [CheckoutController::class, 'getProvinces']);
-    Route::get('/api/districts', [CheckoutController::class, 'getDistricts']);
-    Route::get('/api/wards', [CheckoutController::class, 'getWards']);
+    Route::post('/xu-ly-thanh-toan', [PaymentController::class, 'processOrder'])->name('checkout.process');
+    // Route::get('/api/provinces', [CheckoutController::class, 'getProvinces']);
+    // Route::get('/api/districts', [CheckoutController::class, 'getDistricts']);
+    // Route::get('/api/wards', [CheckoutController::class, 'getWards']);
     //Cổng thanh toán 
     Route::post('/vnpay_payment', [PaymentController::class, 'vnpay_payment'])->name('vnpay_payment');
     Route::post('/cod_payment', [PaymentController::class, 'cod_payment'])->name('cod_payment');

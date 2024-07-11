@@ -39,13 +39,13 @@ class ProductsController extends Controller
             if ($product->has_variants) {
                 $prices = $product->variants->pluck('price')->toArray();
                 if (count($prices) == 1) {
-                    $product->price_range = number_format($prices[0], 0, ',', '.') . ' VND';
+                    $product->price_range = number_format($prices[0], 0, ',', '.') . '₫';
                 } elseif (count($prices) > 1) {
                     $product->price_range = number_format(min($prices), 0, ',', '.') . ' - ' . number_format(max($prices), 0, ',', '.');
                 }
                 $product->total_stock = $product->variants->sum('stock');
             } else {
-                $product->price_range = number_format($product->base_price, 0, ',', '.') . ' VND';
+                $product->price_range = number_format($product->base_price, 0, ',', '.') . '₫';
                 $product->total_stock = $product->store_quantity;
             }
         }
@@ -200,17 +200,17 @@ class ProductsController extends Controller
             $prices = $product->variants->pluck('price')->unique();
 
             if ($prices->count() == 1) {
-                $product->price_range = number_format($prices->first(), 0, ',', '.') . ' VND';
+                $product->price_range = number_format($prices->first(), 0, ',', '.') . '₫';
             } else {
                 $totalStock = $product->variants->sum('stock');
                 $minPrice = $product->variants->min('price');
                 $maxPrice = $product->variants->max('price');
                 $product->total_stock = $totalStock;
-                $product->price_range = number_format($minPrice, 0, ',', '.') . ' - ' . number_format($maxPrice, 0, ',', '.') . ' VND';
+                $product->price_range = number_format($minPrice, 0, ',', '.') . ' - ' . number_format($maxPrice, 0, ',', '.') . '₫';
             }
         } else {
             $product->total_stock = $product->store_quantity;
-            $product->price_range = number_format($product->base_price, 0, ',', '.') . ' VND';
+            $product->price_range = number_format($product->base_price, 0, ',', '.') . '₫';
         }
 
         return view('pages.admin.products.detail', [

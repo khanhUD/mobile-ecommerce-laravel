@@ -27607,4 +27607,16 @@ pre[class*="language-"] {
   display: inline-block;
 }
 
+.short-description {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Số dòng bạn muốn hiển thị */
+  -webkit-box-orient: vertical;
+}
+
+.expanded-description {
+  -webkit-line-clamp: unset;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */

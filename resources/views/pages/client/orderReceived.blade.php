@@ -128,6 +128,7 @@
                         <p><strong>Địa chỉ:</strong> {{ $wardName }}, {{ $districtName }}, {{ $provinceName }}</p>
                         <p><strong>Địa chỉ giao hàng:</strong> {{ $order->address }}</p>
                         <p><strong>Số điện thoại:</strong> {{ $order->phone }}</p>
+                        <p><strong>Ghi chú:</strong> {{ $order->note }}</p>
                     </div>
                 </div>
             </div>

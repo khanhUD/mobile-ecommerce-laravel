@@ -575,3 +575,54 @@ nav {
     text-align: center;
   }
 }
+
+.short-description {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Số dòng bạn muốn hiển thị */
+  -webkit-box-orient: vertical;
+}
+
+.expanded-description {
+  -webkit-line-clamp: unset;
+}
+
+@media (max-width: 767.98px) {
+  .ft-cate {
+      display: flex;
+      overflow-x: auto;
+      white-space: nowrap;
+  }
+
+  .ft-cate a {
+      flex: 0 0 auto;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-right: 10px;
+      text-decoration: none;
+      color: #000;
+  }
+
+  .ft-cate a.active {
+      background-color: #dc3545;
+      color: #fff;
+  }
+
+  .top-products {
+      display: none; /* Ẩn phần top sản phẩm yêu thích trên điện thoại */
+  }
+
+
+}
+
+@media (min-width: 768px) {
+  .categories-vertical {
+      display: block;
+  }
+
+  .categories-horizontal {
+      display: none;
+  }
+}

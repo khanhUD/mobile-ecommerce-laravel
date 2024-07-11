@@ -16,6 +16,34 @@ use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
+    public function processOrder(Request $request)
+    {
+
+        // Validate the input
+        $request->validate([
+            'fullName' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'ward' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:10',
+            'note' => 'nullable|string',
+            'paymentMethod' => 'required|string',
+        ]);
+        $paymentMethod = $request->input('paymentMethod');
+        if ($paymentMethod === 'VNPay') {
+            // Chuyển hướng tới trang thanh toán của VNPay
+            return redirect()->route('vnpay_payment', [
+                'amount' => $request->input('totalAmount'),
+                'orderInfo' => 'Thanh toán đơn hàng'
+            ]);
+        } else if ($paymentMethod === 'Cod') {
+            // Tạo đơn hàng cho thanh toán COD
+            return $this->createOrder($request, 'Cod');
+        }
+
+        return back()->with('error', 'Phương thức thanh toán không hợp lệ.');
+    }
     public function vnpay_payment()
     {
         error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
@@ -52,11 +80,6 @@ class PaymentController extends Controller
         if (isset($vnp_BankCode) && $vnp_BankCode != "") {
             $inputData['vnp_BankCode'] = $vnp_BankCode;
         }
-        // if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
-        //     $inputData['vnp_Bill_State'] = $vnp_Bill_State;
-        // }
-
-        //var_dump($inputData);
         ksort($inputData);
         $query = "";
         $i = 0;
@@ -81,35 +104,35 @@ class PaymentController extends Controller
         );
         return redirect($vnp_Url);
     }
-    public function Cod_payment(Request $request)
+    private function createOrder(Request $request, $paymentMethod, $transactionId = null, $status = 'pending')
     {
         // Lấy giỏ hàng của người dùng
-        $cart = Cart::where('user_id', auth()->id())->where('status', 'active')->first();
-    
+        $cart = Cart::where('user_id',  auth()->id())->where('status', 'active')->first();
+
         // Kiểm tra nếu giỏ hàng không tồn tại
         if (!$cart) {
             return redirect()->back()->with('error', 'Giỏ hàng không tồn tại hoặc đã hết hạn.');
         }
-    
+
         // Tạo mã đơn hàng duy nhất
         $orderCode = date('YmdHis') . strtoupper(uniqid());
-    
+
         // Kiểm tra và cập nhật voucher nếu có
         if ($request->voucher) {
             $voucher = Voucher::where('code', $request->voucher)->first();
-    
+
             if (!$voucher) {
                 return redirect()->back()->with('error', 'Mã voucher không hợp lệ.');
             }
-    
+
             if ($voucher->used >= $voucher->quantity) {
                 return redirect()->back()->with('error', 'Voucher này đã hết lượt sử dụng.');
             }
-    
+
             // Cập nhật số lần sử dụng của voucher
             $voucher->increment('used');
         }
-    
+
         // Tạo đơn hàng
         $order = Order::create([
             'user_id' => auth()->id(),
@@ -129,10 +152,11 @@ class PaymentController extends Controller
                 return $item->price * $item->quantity;
             }) - ($request->discount_amount ?? 0),
             'voucher_code' => $request->voucher,
-            'payment_method' => $request->order_type,
-            'status' => 'pending',
+            'payment_method' => $paymentMethod,
+            'transaction_id' => $transactionId,
+            'status' => $status,
         ]);
-    
+
         // Tạo các chi tiết đơn hàng
         foreach ($cart->items as $item) {
             OrderItem::create([
@@ -144,7 +168,7 @@ class PaymentController extends Controller
                 'price' => $item->price,
                 'total_price' => $item->price * $item->quantity,
             ]);
-    
+
             // Trừ số lượng sản phẩm trong kho
             if ($item->variant_id) {
                 // Nếu sản phẩm có biến thể
@@ -160,17 +184,13 @@ class PaymentController extends Controller
                 }
             }
         }
-    
+
         // Xóa các mục trong giỏ hàng
         CartItem::where('cart_id', $cart->id)->delete();
-    
+
         // Xóa giỏ hàng
         $cart->delete();
-    
-        // Tạm thời không gửi mail nữa
-        // Mail::to($request->email)->send(new OrderInvoiceMail($order));
-    
-        return redirect()->route('orderReceived', ['id' => $order->id]);
+
+        return redirect()->route('orderReceived', ['id' => $order->id])->with('success', 'Đặt hàng thành công.');
     }
-    
 }

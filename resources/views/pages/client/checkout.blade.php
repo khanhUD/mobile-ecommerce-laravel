@@ -12,43 +12,47 @@
                             <div class="mb-3 col-md-6 col-12">
                                 <label for="fullName" class="form-label">Họ và tên *</label>
                                 <input type="text" class="form-control" id="fullName" name="fullName"
-                                    value="{{ auth()->user()->name }}" required>
+                                    value="{{ auth()->user()->name }}">
                                 <div class="invalid-feedback" style="display: none;"></div>
                             </div>
                             <div class="mb-3 col-md-6 col-12">
                                 <label for="phone" class="form-label">Số điện thoại *</label>
                                 <input type="text" class="form-control" id="phone" name="phone"
-                                    value="{{ auth()->user()->phone }}" required>
+                                    value="{{ auth()->user()->phone }}">
                                 <div class="invalid-feedback" style="display: none;"></div>
                             </div>
 
                             <div class="mb-3 col-md-6 col-12">
                                 <label for="city" class="form-label">Tỉnh/Thành Phố *</label>
-                                <select class="form-control" id="city" name="city" required></select>
+                                <select class="form-control" id="city" name="city">
+                                    <option value="">Tỉnh Thành</option>
+                                </select>
                                 <div class="invalid-feedback" style="display: none;"></div>
                             </div>
                             <div class="mb-3 col-md-6 col-12">
                                 <label for="district" class="form-label">Quận/Huyện *</label>
-                                <select class="form-control" id="district" name="district" required></select>
+                                <select class="form-control" id="district" name="district">
+                                    <option value="">Quận Huyện</option>
+                                </select>
                                 <div class="invalid-feedback" style="display: none;"></div>
                             </div>
-
                             <div class="mb-3 col-md-6 col-12">
                                 <label for="ward" class="form-label">Phường/Xã *</label>
-                                <select class="form-control" id="ward" name="ward" required></select>
+                                <select class="form-control" id="ward" name="ward">
+                                    <option value="">Phường Xã</option>
+                                </select>
                                 <div class="invalid-feedback" style="display: none;"></div>
                             </div>
                             <div class="mb-3 col-md-6 col-12">
                                 <label for="address" class="form-label">Địa chỉ *</label>
-                                <input type="text" class="form-control" id="address" name="address"
-                                    value="Chợ trung hưng" required>
+                                <input type="text" class="form-control" id="address" name="address">
                                 <div class="invalid-feedback" style="display: none;"></div>
                             </div>
 
 
                             <div class="mb-3 col-12">
                                 <label for="note" class="form-label">Ghi chú đơn hàng (tùy chọn)</label>
-                                <textarea class="form-control" id="note" name="note"></textarea>
+                                <textarea class="form-control" id="note" name="note" placeholder="Giao hàng nhanh..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -121,12 +125,12 @@
                             <div class="mb-3">
                                 <label class="form-label ">Hình thức thanh toán</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="order_type" value="Cod"
+                                    <input class="form-check-input" type="radio" name="paymentMethod" value="Cod"
                                         checked>
-                                    <label class="form-check-label" for="shipCode">Thanh toán khi nhận hàng</label>
+                                    <label class="form-check-label" for="Cod">Thanh toán khi nhận hàng</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="order_type" value="VNPay">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" value="VNPay">
                                     <label class="form-check-label" for="vnpay">Thanh toán qua VNPAY</label>
                                 </div>
                             </div>
@@ -154,57 +158,88 @@
             </div>
         </form>
     </div>
-
+    <script src="https://esgoo.net/scripts/jquery.js"></script>
+    {{-- <script src="{{ asset('assets/client/js/checkOut.js') }}"></script> --}}
     <script>
+        $(document).ready(function() {
+            // Lấy tỉnh thành
+            $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function(data_tinh) {
+                if (data_tinh.error == 0) {
+                    $.each(data_tinh.data, function(key_tinh, val_tinh) {
+                        $("#city").append('<option value="' + val_tinh.id + '">' + val_tinh
+                            .full_name + '</option>');
+                    });
+
+                    $("#city").change(function(e) {
+                        var idtinh = $(this).val();
+                        // Lấy quận huyện
+                        $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function(
+                            data_quan) {
+                            if (data_quan.error == 0) {
+                                $("#district").html(
+                                    '<option value="0">Quận Huyện</option>');
+                                $("#ward").html('<option value="0">Phường Xã</option>');
+                                $.each(data_quan.data, function(key_quan, val_quan) {
+                                    $("#district").append('<option value="' +
+                                        val_quan.id + '">' + val_quan
+                                        .full_name + '</option>');
+                                });
+
+                                // Lấy phường xã  
+                                $("#district").change(function(e) {
+                                    var idquan = $(this).val();
+                                    $.getJSON('https://esgoo.net/api-tinhthanh/3/' +
+                                        idquan + '.htm',
+                                        function(data_phuong) {
+                                            if (data_phuong.error == 0) {
+                                                $("#ward").html(
+                                                    '<option value="0">Phường Xã</option>'
+                                                );
+                                                $.each(data_phuong.data,
+                                                    function(key_phuong,
+                                                        val_phuong) {
+                                                        $("#ward").append(
+                                                            '<option value="' +
+                                                            val_phuong
+                                                            .id + '">' +
+                                                            val_phuong
+                                                            .full_name +
+                                                            '</option>');
+                                                    });
+                                            }
+                                        });
+                                });
+
+                            }
+                        });
+                    });
+
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/api/provinces')
-                .then(response => response.json())
-                .then(data => {
-                    let citySelect = document.getElementById('city');
-                    data.data.forEach(province => {
-                        let option = document.createElement('option');
-                        option.value = province.id;
-                        option.text = province.full_name;
-                        citySelect.appendChild(option);
-                    });
-                });
-            document.getElementById('city').addEventListener('change', function() {
-                let cityId = this.value;
-                fetch(`/api/districts?province_id=${cityId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let districtSelect = document.getElementById('district');
-                        districtSelect.innerHTML = '';
-                        data.data.forEach(district => {
-                            let option = document.createElement('option');
-                            option.value = district.id;
-                            option.text = district.full_name;
-                            districtSelect.appendChild(option);
-                        });
-                    });
-            });
-            document.getElementById('district').addEventListener('change', function() {
-                let districtId = this.value;
-                fetch(`/api/wards?district_id=${districtId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let wardSelect = document.getElementById('ward');
-                        wardSelect.innerHTML = '';
-                        data.data.forEach(ward => {
-                            let option = document.createElement('option');
-                            option.value = ward.id;
-                            option.text = ward.full_name;
-                            wardSelect.appendChild(option);
-                        });
-                    });
-            });
+            let voucherApplied = false; // Biến để kiểm tra xem voucher đã được áp dụng hay chưa
+
             document.getElementById('applyVoucherButton').addEventListener('click', function() {
+                if (voucherApplied) {
+                    const voucherMessage = document.getElementById('voucherMessage');
+                    if (voucherMessage) {
+                        voucherMessage.innerText = 'Mã voucher đã được áp dụng';
+                        voucherMessage.classList.remove('d-none');
+                    }
+                    return;
+                }
+
                 let voucherCode = document.getElementById('voucher').value;
                 let totalAmount = parseInt(document.getElementById('totalAmountInput').value);
 
                 if (voucherCode.trim() === '') {
-                    document.getElementById('voucherMessage').innerText = 'Vui lòng nhập mã voucher';
-                    document.getElementById('voucherMessage').classList.remove('d-none');
+                    const voucherMessage = document.getElementById('voucherMessage');
+                    if (voucherMessage) {
+                        voucherMessage.innerText = 'Vui lòng nhập mã voucher';
+                        voucherMessage.classList.remove('d-none');
+                    }
                     return;
                 }
 
@@ -225,18 +260,25 @@
                             document.getElementById('voucherSection').classList.remove('d-none');
                             document.getElementById('voucherMessage').classList.add('d-none');
                             document.getElementById('discountAmountInput').value = discount;
+                            voucherApplied = true; // Đánh dấu voucher đã được áp dụng
                         } else {
                             document.getElementById('voucherSection').classList.add('d-none');
-                            document.getElementById('voucherMessage').innerText = data.message;
-                            document.getElementById('voucherMessage').classList.remove('d-none');
+                            const voucherMessage = document.getElementById('voucherMessage');
+                            if (voucherMessage) {
+                                voucherMessage.innerText = data.message;
+                                voucherMessage.classList.remove('d-none');
+                            }
                             document.getElementById('discountAmountInput').value = 0;
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         document.getElementById('voucherSection').classList.add('d-none');
-                        document.getElementById('voucherMessage').innerText = 'Mã voucher không hợp lệ';
-                        document.getElementById('voucherMessage').classList.remove('d-none');
+                        const voucherMessage = document.getElementById('voucherMessage');
+                        if (voucherMessage) {
+                            voucherMessage.innerText = 'Mã voucher không hợp lệ';
+                            voucherMessage.classList.remove('d-none');
+                        }
                         document.getElementById('discountAmountInput').value = 0;
                     });
             });
@@ -247,39 +289,39 @@
                 }).format(number) + '₫';
             }
 
+
             document.getElementById('placeOrderButton').addEventListener('click', function(event) {
                 let isValid = true;
-                const requiredFields = ['fullName', 'phone', 'city', 'district', 'ward', 'address'];
+                const Fields = ['fullName', 'phone', 'city', 'district', 'ward', 'address'];
 
-                requiredFields.forEach(function(fieldId) {
+                Fields.forEach(function(fieldId) {
                     const field = document.getElementById(fieldId);
                     if (!field.value.trim()) {
                         isValid = false;
                         field.classList.add('is-invalid');
-                        field.nextElementSibling.innerText = 'Không được để trống';
-                        field.nextElementSibling.style.display = 'block';
+                        const nextElement = field.nextElementSibling;
+                        if (nextElement) {
+                            nextElement.innerText = 'Không được để trống';
+                            nextElement.style.display = 'block';
+                        }
                     } else {
                         field.classList.remove('is-invalid');
-                        field.nextElementSibling.innerText = '';
-                        field.nextElementSibling.style.display = 'none';
+                        const nextElement = field.nextElementSibling;
+                        if (nextElement) {
+                            nextElement.innerText = '';
+                            nextElement.style.display = 'none';
+                        }
                     }
                 });
 
                 if (!isValid) {
                     event.preventDefault();
                 } else {
-                    let selectedPaymentMethod = document.querySelector('input[name="order_type"]:checked')
-                        .value;
-                    let checkoutForm = document.getElementById('checkoutForm');
-                    if (selectedPaymentMethod === 'VNPay') {
-                        checkoutForm.action = "{{ route('vnpay_payment') }}";
-                    }
-                    if (selectedPaymentMethod === 'Cod') {
-                        checkoutForm.action = "{{ route('cod_payment') }}";
-                    }
-                    checkoutForm.submit();
+                    // document.getElementById('checkoutForm').action ="{{ route('checkout.process') }}";
+                    document.getElementById('checkoutForm').submit();
                 }
             });
+
         });
     </script>
 @endsection

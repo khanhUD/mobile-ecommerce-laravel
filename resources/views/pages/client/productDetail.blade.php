@@ -66,7 +66,7 @@
                                         @if (
                                             $attribute->attribute->attribute_name == 'Dung Lượng' &&
                                                 !in_array($attribute->attribute_value, $displayedCapacities))
-                                            <div class="col-md-2 mb-3">
+                                            <div class="col-md-2 col-3 mb-3">
                                                 <div class="option-group">
                                                     <div class="option" style="font-weight: 500"
                                                         data-capacity="{{ $attribute->attribute_value }}">
@@ -81,32 +81,32 @@
                                     @endforeach
                                 @endforeach
                             </div>
-                            @if ($product->has_variants === 1)
-                                <div class="row mb-3">
-                                    @php
-                                        $displayedColors = [];
-                                    @endphp
-                                    @foreach ($product->variants as $variant)
-                                        @foreach ($variant->attributes as $attribute)
-                                            @if ($attribute->attribute->attribute_name == 'Màu' && !in_array($attribute->attribute_value, $displayedColors))
-                                                <div class="col-md-2 mb-3">
-                                                    <div class="option-group">
-                                                        <div class="color-option" style="font-weight: 500"
-                                                            data-color="{{ $attribute->attribute_value }}">
-                                                            <img src="{{ asset('images/' . $variant->image_url) }}"
-                                                                class="w-100" alt="{{ $variant->image_url }}">
-                                                            <span>{{ $attribute->attribute_value }}</span>
-                                                        </div>
+
+                            <div class="row mb-3">
+                                @php
+                                    $displayedColors = [];
+                                @endphp
+                                @foreach ($product->variants as $variant)
+                                    @foreach ($variant->attributes as $attribute)
+                                        @if ($attribute->attribute->attribute_name == 'Màu' && !in_array($attribute->attribute_value, $displayedColors))
+                                            <div class="col-md-2 col-3 mb-3">
+                                                <div class="option-group">
+                                                    <div class="color-option" style="font-weight: 500"
+                                                        data-color="{{ $attribute->attribute_value }}">
+                                                        <img src="{{ asset('images/' . $variant->image_url) }}"
+                                                            class="w-100" alt="{{ $variant->image_url }}">
+                                                        <span>{{ $attribute->attribute_value }}</span>
                                                     </div>
                                                 </div>
-                                                @php
-                                                    $displayedColors[] = $attribute->attribute_value;
-                                                @endphp
-                                            @endif
-                                        @endforeach
+                                            </div>
+                                            @php
+                                                $displayedColors[] = $attribute->attribute_value;
+                                            @endphp
+                                        @endif
                                     @endforeach
-                                </div>
-                            @endif
+                                @endforeach
+                            </div>
+
                             <div class="me-3 mb-3">
                                 <p class="mb-1" style="font-weight: 500">Số lượng:</p>
                                 <form id="add-to-cart-form" action="{{ route('cart.add') }}" method="POST">
@@ -115,15 +115,15 @@
                                     <input type="hidden" name="variant_id" id="variant_id">
                                     <input type="hidden" name="price" id="product_price_value"
                                         value="{{ $product->base_price }}">
-                                    <div class="row d-flex align-items-center">
-                                        <div class="col-md-4 w-25 input-group p-0">
+                                    <div class="row d-flex align-items-center ">
+                                        <div class="col-md-4 w-25 input-group p-0 mb-md-0 mb-2">
                                             <input class="form-control" type="number" name="quantity" min="1"
                                                 value="1">
                                         </div>
-                                        <div class="col-md-8">
+                                        <div class="col-md-8 p-md-1 p-0">
                                             <button class="btn btn-danger" type="submit">
                                                 <i class="fa fa-shopping-cart"></i> Thêm giỏ hàng
-                                            </button> 
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -185,31 +185,36 @@
                 @endif
                 <div class="row mb-3">
                     <div class="col-md-7">
-                        {{-- description --}}
-                        <p id="product-description">
-                            {!! Str::limit($product->long_description, 500, '...') !!}
-                            <span id="more-text" style="display: none;">{!! $product->long_description !!}</span>
-                        </p>
+                        <div id="product-description" class="short-description">
+                            {!! $product->long_description !!}
+                        </div>
+                        <div class="text-center">
+                            <button id="toggle-description" class="btn btn-danger p-0">Xem thêm</button>
+                        </div>
                     </div>
                     <div class="col-md-5">
                         <div class="row">
-                            <p>{!! $product->specifications !!}</p>
+                            <div class="col-12">
+                                <div style="overflow-x: auto;">
+                                    <p>{!! $product->specifications !!}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row">
+                       <div class="row">
                             <div class="card p-0">
                                 <h6 class="card-header title">Bài viết mới nhất</h6>
                                 <div class="product-widget mb-3">
                                     @foreach ($postnews as $postnew)
                                         <div class="row mt-2">
-                                            <div class="col-md-4 pe-0">
+                                            <div class="col-md-4 col-6 pe-0">
                                                 <a href="{{ route('blog.show', $postnew->id) }}">
                                                     <img src="{{ $postnew->image ? asset('images/' . $postnew->image) : asset('images/no_images.jpg') }}"
-                                                        class="card-img" alt="Product 1">
+                                                        class="card-img " alt="Product 1">
                                                 </a>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-8 col-6">
                                                 <div class="btn btn-danger btn-sm">
-                                                    {{ Str::limit($postnew->category->name, 20, '...') }}</div>
+                                                    {{ $postnew->category->name }}</div>
                                                 <a href="{{ route('blog.show', $postnew->id) }}"
                                                     class="text-decoration-none small title title-post truncate-text">{{ $postnew->title }}</a>
                                             </div>
@@ -221,92 +226,56 @@
                     </div>
                 </div>
                 <div class="container card review-section">
-                    <div class="row">
-                        <div>
-                            <div class="card-header">
-                                <h4>Đánh giá sản phẩm</h4>
+                    <div class="card-header">
+                        <h4>Đánh giá sản phẩm</h4>
+                    </div>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4">
+                            <div class="star-rating d-flex align-items-center justify-content-center">
+                                <span class="fs-1">4/5</span>
+                                <div class="mt-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
                             </div>
-                            <div class="row my-3">
-                                <div class="col-4 align-content-center justify-content-center text-center">
-                                    <div class="">
-                                        <div class="star-rating">
-                                            <span class="fs-1">4/5</span>
-                                            <div class="mt-2">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="far fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <p>66 đánh giá</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 align-content-center justify-content-center text-center">
-                                    <div class="">
-                                        <div class="progress-block">
-                                            <div class="d-flex align-items-center">
-                                                <span>5</span>
-                                                <div class="progress flex-grow-1 mx-2">
-                                                    <div class="progress-bar" style="width: 17%;"></div>
-                                                </div>
-                                                <span>11</span>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-1">
-                                                <span>4</span>
-                                                <div class="progress flex-grow-1 mx-2">
-                                                    <div class="progress-bar" style="width: 80%;"></div>
-                                                </div>
-                                                <span>53</span>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-1">
-                                                <span>3</span>
-                                                <div class="progress flex-grow-1 mx-2">
-                                                    <div class="progress-bar" style="width: 3%;"></div>
-                                                </div>
-                                                <span>2</span>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-1">
-                                                <span>2</span>
-                                                <div class="progress flex-grow-1 mx-2">
-                                                    <div class="progress-bar" style="width: 0%;"></div>
-                                                </div>
-                                                <span>0</span>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-1">
-                                                <span>1</span>
-                                                <div class="progress flex-grow-1 mx-2">
-                                                    <div class="progress-bar" style="width: 0%;"></div>
-                                                </div>
-                                                <span>0</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="align-content-center col-4 justify-content-center text-center">
-                                    <button class="btn btn-danger">GỬI ĐÁNH GIÁ</button>
-                                </div>
+                            <div class="ms-3">
+                                <p>66 đánh giá</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="review-item">
-                        <div class="d-flex user-info">
-                            <div class="avatar mb-5">V</div>
-                            <div>
-                                <div class="username mt-1">Vỹ</div>
-                                <div class="">
-                                    <div class="star-rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
+                        <div class="col-md-4">
+                            <div class="progress-block">
+                                <div class="d-flex align-items-center">
+                                    <span>5</span>
+                                    <div class="progress flex-grow-1 mx-2">
+                                        <div class="progress-bar bg-danger" style="width: 17%;"></div>
                                     </div>
+                                    <span>11</span>
+                                </div>
+                                <!-- Các thanh tiến trình cho các mức đánh giá khác -->
+                                <!-- ... -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-danger btn-sm">GỬI ĐÁNH GIÁ</button>
+                        </div>
+                    </div>
+                    <div class="review-item mt-3">
+                        <div class="d-flex user-info mb-4">
+                            <div class="col-1 avatar">V</div>
+                            <div class="ms-3">
+                                <div class="username">Vỹ</div>
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
                                 </div>
                                 <p class="mb-0">Mình mới mua trả góp. thủ tục nhanh mà nhân viên nhiệt tình nhé</p>
-                                <div class="d-flex">
+                                <div class="d-flex align-items-center">
                                     <div class="date me-3">Ngày 07/04/2024</div>
                                     <div class="">trả lời</div>
                                 </div>
@@ -314,11 +283,10 @@
                         </div>
                         <div class="ms-4 mt-2">
                             <div class="d-flex user-info">
-                                <div class="avatar">H</div>
-                                <div class="card p-1">
+                                <div class=" col-1 avatar">H</div>
+                                <div class=" p-1 ms-3">
                                     <div class="username">Hoang</div>
-                                    <p class="mt-1 mb-0">@Vỹ trả góp qua cty tài Chính nào và trả trước bao nhiêu % vậy ta
-                                    </p>
+                                    <p class="mt-1 mb-0">@Vỹ trả góp qua cty tài Chính nào và trả trước bao nhiêu % vậy ta</p>
                                     <div class="date">5 ngày trước</div>
                                 </div>
                             </div>
@@ -327,10 +295,35 @@
                 </div>
             </div>
 
+            <style>
+                .short-description {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 5;
+                    /* Số dòng bạn muốn hiển thị */
+                    -webkit-box-orient: vertical;
+                }
+
+                .expanded-description {
+                    -webkit-line-clamp: unset;
+                }
+            </style>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
+                    const toggleBtn = document.getElementById('toggle-description');
+                    const description = document.getElementById('product-description');
+
                     const variants = @json($product->variants);
 
+
+                    toggleBtn.addEventListener('click', function() {
+                        description.classList.toggle('expanded-description');
+                        if (description.classList.contains('expanded-description')) {
+                            toggleBtn.textContent = 'Thu gọn';
+                        } else {
+                            toggleBtn.textContent = 'Xem thêm';
+                        }
+                    });
                     document.querySelectorAll('.option, .color-option').forEach(option => {
                         option.addEventListener('click', function() {
                             if (option.classList.contains('option')) {
@@ -408,12 +401,7 @@
                     });
                 });
             </script>
-            <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-                integrity="sha384-B6UOSFBci6Fbub2Mk5z0W2FNQp1fGqJ2XB3Y1W4Y3gE3IbN+5/6/8U9TLX1fSx64" crossorigin="anonymous">
-            </script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-                integrity="sha384-QJHtvGhmr9+MphmC5S7L7/8PEvwE9k5sXKFNxdjlfWlCq4z/FzZer1KThgFZVxg" crossorigin="anonymous"></script>
+
         </div>
     </div>
 @endsection

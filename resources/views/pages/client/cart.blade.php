@@ -6,7 +6,7 @@
             <div class="col-md-7 mb-3">
                 @if ($cart && $cart->items->count() > 0)
                     <div class="table-responsive">
-                        <form action="{{ route('cart.update') }}" method="POST">
+                        <form id="updateCartForm" action="{{ route('cart.update') }}" method="POST">
                             @csrf
                             <table class="table">
                                 <thead>
@@ -60,7 +60,11 @@
                                     @endforeach
                                 </tbody>
                             </table>
-
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('productsClient.index') }}" class="btn btn-outline-danger">&larr; Tiếp
+                                    tục xem sản phẩm</a>
+                                <button type="submit" class="btn btn-danger">Cập nhật giỏ hàng</button>
+                            </div>
                         </form>
                     </div>
                 @else
@@ -69,11 +73,7 @@
                         <div class="btn btn-danger">Quay về trang chủ</div>
                     </a>
                 @endif
-                <div class="d-flex justify-content-between">
-                    <a href="{{ route('productsClient.index') }}" class="btn btn-outline-danger">&larr; Tiếp
-                        tục xem sản phẩm</a>
-                    <button type="submit" class="btn btn-danger">Cập nhật giỏ hàng</button>
-                </div>
+
             </div>
             <div class="col-md-5">
                 @if ($cart && $cart->items->count() > 0)
@@ -93,13 +93,7 @@
                         <a href="{{ route('checkout.index') }}" class="btn btn-danger btn-block mt-3">Tiến hành thanh
                             toán</a>
                     </div>
-                    <div class="mt-3">
-                        <label for="promoCode" class="form-label">Phiếu ưu đãi</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="promoCode" placeholder="Mã ưu đãi">
-                            <button class="btn btn-secondary">Áp dụng</button>
-                        </div>
-                    </div>
+               
                 @endif
             </div>
         </div>
@@ -125,5 +119,9 @@
                     .catch(error => console.error('Error:', error));
             }
         }
+        document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('updateCartForm').submit();
+        });
     </script>
 @endsection
