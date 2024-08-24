@@ -126,15 +126,16 @@ class HomeController extends Controller
             ->get();
 
         // Top 10 sản phẩm bán chạy trong khoảng thời gian
-        $topSellingProducts = OrderItem::selectRaw('products.id, products.name,  products.image_url, SUM(order_items.quantity) as total_quantity')
+        $topSellingProducts = OrderItem::selectRaw('products.id, products.name, products.image_url, SUM(order_items.quantity) as total_quantity')
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.status', 'completed')
             ->whereBetween('orders.created_at', [$startDate, $endDate])
-            ->groupBy('products.id', 'products.name',) // Thêm cột products.name vào GROUP BY
+            ->groupBy('products.id', 'products.name', 'products.image_url') // Thêm cột products.image_url vào GROUP BY
             ->orderBy('total_quantity', 'desc')
             ->take(10)
             ->get();
+
 
 
 

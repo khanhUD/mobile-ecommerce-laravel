@@ -34,21 +34,17 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::with('items.product', 'items.variant.attributes.attribute')->findOrFail($id);
-    
         // Lấy tên tỉnh/thành phố, quận/huyện, và phường/xã từ API
-        $province = Http::get("https://esgoo.net/api-tinhthanh/1/0.htm")->json();
-        $district = Http::get("https://esgoo.net/api-tinhthanh/2/{$order->city}.htm")->json();
-        $ward = Http::get("https://esgoo.net/api-tinhthanh/3/{$order->district}.htm")->json();
-    
-        // Tìm tên tỉnh/thành phố
-        $provinceName = collect($province['data'])->firstWhere('id', $order->city)['full_name'] ?? 'N/A';
-        // Tìm tên quận/huyện
-        $districtName = collect($district['data'])->firstWhere('id', $order->district)['full_name'] ?? 'N/A';
-        // Tìm tên phường/xã
-        $wardName = collect($ward['data'])->firstWhere('id', $order->ward)['full_name'] ?? 'N/A';
-    
+        $address = Http::get("https://esgoo.net/api-tinhthanh/5/{$order->ward}.htm")->json();
+        // Kiểm tra xem có lỗi hay không và dữ liệu có tồn tại không
+        if ($address['error'] === 0 && isset($address['data'])) {
+            // Lấy giá trị full_name từ mảng data
+            $address = $address['data']['full_name'] ?? 'N/A';
+        } else {
+            echo "Lỗi khi lấy dữ liệu hoặc không có dữ liệu.";
+        }
         $title = 'Thanh toán hóa đơn';
-        return view('pages.admin.orders.detail', compact('order', 'title', 'provinceName', 'districtName', 'wardName'));
+        return view('pages.admin.orders.detail',  compact('order', 'title','address'));
     }
 
     public function edit($id)

@@ -125,8 +125,8 @@
                     </div>
                     <div class="card-body small-font">
                         <p><strong>Họ và tên:</strong> {{ $order->full_name }}</p>
-                        <p><strong>Địa chỉ:</strong> {{ $wardName }}, {{ $districtName }}, {{ $provinceName }}</p>
-                        <p><strong>Địa chỉ giao hàng:</strong> {{ $order->address }}</p>
+                        <p><strong>Địa chỉ:</strong> {{$address}}</p>
+                        <p><strong>Địa chỉ chi tiết:</strong> {{ $order->address }}</p>
                         <p><strong>Số điện thoại:</strong> {{ $order->phone }}</p>
                         <p><strong>Ghi chú:</strong> {{ $order->note }}</p>
                     </div>

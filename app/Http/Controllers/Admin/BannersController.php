@@ -145,7 +145,7 @@ class BannersController extends Controller
         $newStatus = $request->input('status');
         $banner->status = $newStatus;
         $banner->save();
-    
+
         return response()->json(['status' => $newStatus])->with('success', 'Xóa thành công.');
     }
 }

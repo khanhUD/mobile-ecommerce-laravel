@@ -1,29 +1,29 @@
-$(document).ready(function () {
+$(document).ready(function() {
     // Lấy tỉnh thành
-    $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
+    $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function(data_tinh) {
         if (data_tinh.error == 0) {
-            $.each(data_tinh.data, function (key_tinh, val_tinh) {
+            $.each(data_tinh.data, function(key_tinh, val_tinh) {
                 $("#city").append('<option value="' + val_tinh.id + '">' + val_tinh.full_name + '</option>');
             });
 
-            $("#city").change(function (e) {
+            $("#city").change(function(e) {
                 var idtinh = $(this).val();
                 // Lấy quận huyện
-                $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
+                $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function(data_quan) {
                     if (data_quan.error == 0) {
                         $("#district").html('<option value="0">Quận Huyện</option>');
                         $("#ward").html('<option value="0">Phường Xã</option>');
-                        $.each(data_quan.data, function (key_quan, val_quan) {
+                        $.each(data_quan.data, function(key_quan, val_quan) {
                             $("#district").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
                         });
 
                         // Lấy phường xã  
-                        $("#district").change(function (e) {
+                        $("#district").change(function(e) {
                             var idquan = $(this).val();
-                            $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_phuong) {
+                            $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function(data_phuong) {
                                 if (data_phuong.error == 0) {
                                     $("#ward").html('<option value="0">Phường Xã</option>');
-                                    $.each(data_phuong.data, function (key_phuong, val_phuong) {
+                                    $.each(data_phuong.data, function(key_phuong, val_phuong) {
                                         $("#ward").append('<option value="' + val_phuong.id + '">' + val_phuong.full_name + '</option>');
                                     });
                                 }
@@ -38,10 +38,10 @@ $(document).ready(function () {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     let voucherApplied = false; // Biến để kiểm tra xem voucher đã được áp dụng hay chưa
 
-    document.getElementById('applyVoucherButton').addEventListener('click', function () {
+    document.getElementById('applyVoucherButton').addEventListener('click', function() {
         if (voucherApplied) {
             const voucherMessage = document.getElementById('voucherMessage');
             if (voucherMessage) {
@@ -69,10 +69,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     let discount = data.discount;
                     let newTotalAmount = totalAmount - discount;
-                    document.getElementById('totalAmount').innerText = newTotalAmount.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    });
+                    document.getElementById('totalAmount').innerText = newTotalAmount
+                        .toLocaleString('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        });
                     document.getElementById('totalAmountInput').value = newTotalAmount;
                     document.getElementById('voucherDiscount').innerText = `-${numberFormat(discount)}`;
                     document.getElementById('voucherSection').classList.remove('d-none');
@@ -107,13 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }).format(number) + '₫';
     }
 
-    document.getElementById('placeOrderButton').addEventListener('click', function (event) {
+    document.getElementById('placeOrderButton').addEventListener('click', function(event) {
         let isValid = true;
         const Fields = ['fullName', 'phone', 'city', 'district', 'ward', 'address'];
 
-        Fields.forEach(function (fieldId) {
+        Fields.forEach(function(fieldId) {
             const field = document.getElementById(fieldId);
-            if (!field.value.trim()) {
+            if (field && !field.value.trim()) {
                 isValid = false;
                 field.classList.add('is-invalid');
                 const nextElement = field.nextElementSibling;
@@ -121,28 +122,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     nextElement.innerText = 'Không được để trống';
                     nextElement.style.display = 'block';
                 }
-            } else {
+            } else if (field) {
                 field.classList.remove('is-invalid');
                 const nextElement = field.nextElementSibling;
                 if (nextElement) {
                     nextElement.innerText = '';
                     nextElement.style.display = 'none';
                 }
+            } else {
+                console.error(`Element with ID ${fieldId} not found`);
             }
         });
 
         if (!isValid) {
             event.preventDefault();
         } else {
-            let selectedPaymentMethod = document.querySelector('input[name="order_type"]:checked').value;
-            let checkoutForm = document.getElementById('checkoutForm');
-            if (selectedPaymentMethod === 'VNPay') {
-                checkoutForm.action = "{{ route('vnpay_payment') }}";
-            }
-            if (selectedPaymentMethod === 'Cod') {
-                checkoutForm.action = "{{ route('cod_payment') }}";
-            }
-            checkoutForm.submit();
+            document.getElementById('checkoutForm').submit();
         }
     });
+
 });

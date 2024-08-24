@@ -26,24 +26,6 @@ class CheckoutController extends Controller
             'cart' => $cart,
         ]);
     }
-    // public function processOrder(Request $request)
-    // {
-    //     // Validate the input
-    //     $request->validate([
-    //         'lastName' => 'required|string|max:255',
-    //         'firstName' => 'required|string|max:255',
-    //         'country' => 'required|string|max:255',
-    //         'city' => 'required|string|max:255',
-    //         'district' => 'required|string|max:255',
-    //         'ward' => 'required|string|max:255',
-    //         'address' => 'required|string|max:255',
-    //         'phone' => 'required|string|max:15',
-    //         'email' => 'required|email|max:255',
-    //         'paymentMethod' => 'required|string',
-    //         'shippingMethod' => 'required|string',
-    //     ]);
-    //     return back()->with('success', 'Order processed successfully!')->with('data', $request->all());
-    // }
     public function getProvinces()
     {
         $response = Http::get('https://esgoo.net/api-tinhthanh/1/0.htm');

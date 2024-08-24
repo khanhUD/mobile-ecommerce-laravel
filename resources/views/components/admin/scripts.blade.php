@@ -17,7 +17,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/super-build/ckeditor.js"></script>
 <script src="{{ asset('assets/admin/js/ckEditor.js') }}"></script>
-
-
-
 @livewireScripts

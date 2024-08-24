@@ -30,12 +30,6 @@ use App\Http\Controllers\Clients\AccountController as ClientsAccountController;
 use App\Http\Controllers\Clients\FavoriteController;
 use App\Http\Controllers\Clients\GoogleController;
 
-// test 
-// Route::middleware(['auth', 'authUser:1'])->group(function () {
-//     Route::get('/admintest', [HomeController::class, 'index'])->name('manager.dashboard');
-// });
-// test 
-
 
 Route::get('/dang-nhap', [AuthClientController::class, 'showLoginForm'])->name('login');
 Route::post('/xu-ly-dang-nhap', [AuthClientController::class, 'login'])->name('login.store');
@@ -44,9 +38,9 @@ Route::post('/xu-ly-dang-ky', [AuthClientController::class, 'register'])->name('
 Route::get('/dang-xuat', [AuthClientController::class, 'logout'])->name('logout')->middleware('auth');
 Route::get('/authorized/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/authorized/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 // Client 
 Route::get('/', [HomeClientController::class, 'index'])->name('home.index');
-
 Route::get('/san-pham', [ClientsProductsController::class, 'index'])->name('productsClient.index');
 Route::get('/san-pham/{slug?}', [ClientsProductsController::class, 'productByCategory'])->name('productsClient.productByCategory');
 Route::get('/san-pham/{id}/chi-tiet', [ClientsProductsController::class, 'show'])->name('productsClient.show');
@@ -62,16 +56,12 @@ Route::middleware(['auth',])->group(function () {
     Route::get('/gio-hang', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    // Thanh toán 
-    Route::get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/xu-ly-thanh-toan', [PaymentController::class, 'processOrder'])->name('checkout.process');
-    // Route::get('/api/provinces', [CheckoutController::class, 'getProvinces']);
-    // Route::get('/api/districts', [CheckoutController::class, 'getDistricts']);
-    // Route::get('/api/wards', [CheckoutController::class, 'getWards']);
-    //Cổng thanh toán 
-    Route::post('/vnpay_payment', [PaymentController::class, 'vnpay_payment'])->name('vnpay_payment');
-    Route::post('/cod_payment', [PaymentController::class, 'cod_payment'])->name('cod_payment');
-    Route::get('/don-hang/{id}',  [OrdersContrller::class, 'show'])->name('orderReceived');
+     // Thanh toán 
+     Route::get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
+     Route::post('/xu-ly-thanh-toan', [PaymentController::class, 'processOrder'])->name('checkout.process');
+     Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn'])->name('vnpayReturn');
+     Route::get('/vnpay_payment', [PaymentController::class, 'vnpay_payment'])->name('vnpay_payment');
+     Route::get('/don-hang/{id}',  [OrdersContrller::class, 'show'])->name('orderReceived');
     // voucher 
     Route::get('/apply-voucher', [ClientsVoucherController::class, 'applyVoucher'])->name('apply.voucher');
     // Đơn hàng
@@ -196,3 +186,4 @@ Route::middleware(['auth', 'authUser:1'])->group(function () {
         });
     });
 });
+

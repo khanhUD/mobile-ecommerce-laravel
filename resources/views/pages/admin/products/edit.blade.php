@@ -79,31 +79,35 @@
                                             class="{{ $product->has_variants == 0 ? 'd-none' : '' }}">
                                             <h2>Thuộc tính sản phẩm</h2>
                                             <div id="attributes">
-                                                @foreach ($product->attributes as $index => $attribute)
-                                                    <div class="attribute row">
-                                                        <div class="col-12 col-md-6">
+                                                <!-- Lặp qua các thuộc tính của sản phẩm -->
+                                                @foreach ($attributes as $index => $productAttribute)
+                                                    <div class="row">
+                                                        <div class="col-6">
                                                             <label for="attribute_{{ $index }}"
                                                                 class="form-label">Thuộc tính:</label>
                                                             <select id="attribute_{{ $index }}" name="attributes[]"
-                                                                onchange="updateVariants()" class="form-select">
+                                                                class="form-select">
                                                                 @foreach ($attributes as $attr)
                                                                     <option value="{{ $attr->id }}"
-                                                                        {{ $attr->id == $attribute->id ? 'selected' : '' }}>
-                                                                        {{ $attr->attribute_name }}</option>
+                                                                        {{ $attr->id == $productAttribute->attribute_id ? 'selected' : '' }}>
+                                                                     
+                                                                        {{ $attr->attribute_name  }}  
+                                                                    </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-12 col-md-6">
+                                                        <div class="col-6">
                                                             <label for="attribute_values_{{ $index }}"
                                                                 class="form-label">Giá trị:</label>
                                                             <input type="text" name="attribute_values[]"
                                                                 id="attribute_values_{{ $index }}"
-                                                                value="{{ $attribute->variantAttributes->first()->attribute_value ?? '' }}"
-                                                                oninput="updateVariants()" class="form-control">
+                                                                value="{{ $productAttribute->variantAttributes->first()->attribute_value ?? '' }}"
+                                                                class="form-control">
                                                         </div>
                                                     </div>
                                                 @endforeach
                                             </div>
+
                                             <button type="button" onclick="addAttribute()"
                                                 class="btn btn-primary mt-3">Thêm thuộc tính</button>
                                             <h2>Biến thể sản phẩm</h2>
@@ -359,9 +363,9 @@
                                                 <input type="number" id="stock_${index + 1}" name="variants[${index}][stock]" class="form-control">
                                             </div>
                                             ${combination.map(attr => `
-                                                                        <input type="hidden" name="variants[${index}][attributes][]" value="${attr.attributeId}">
-                                                                        <input type="hidden" name="variants[${index}][attribute_values][]" value="${attr.value}">
-                                                                    `).join('')}
+                                                                                                                                                                                                                        <input type="hidden" name="variants[${index}][attributes][]" value="${attr.attributeId}">
+                                                                                                                                                                                                                        <input type="hidden" name="variants[${index}][attribute_values][]" value="${attr.value}">
+                                                                                                                                                                                                                    `).join('')}
                                         </div>
                                     `;
                                     variantsDiv.appendChild(variantDiv);

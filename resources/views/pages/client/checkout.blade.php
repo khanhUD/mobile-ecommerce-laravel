@@ -159,7 +159,7 @@
         </form>
     </div>
     <script src="https://esgoo.net/scripts/jquery.js"></script>
-    {{-- <script src="{{ asset('assets/client/js/checkOut.js') }}"></script> --}}
+    <script src="{{ asset('assets/client/js/checkOut.js') }}"></script>
     <script>
         $(document).ready(function() {
             // Lấy tỉnh thành

@@ -130,15 +130,14 @@
                             <!-- Payment and Shipping Address -->
                             <div class="row mt-4">
                                 <div class="col-md-7">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0 py-2">Địa chỉ thanh toán</h5>
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-primary p-3 ">
+                                            <h5 class="mb-0  text-white">Địa chỉ thanh toán</h5>
                                         </div>
-                                        <div class="card-body small-font">
+                                        <div class="card-body small-font  ">
                                             <p><strong>Họ và tên:</strong> {{ $order->full_name }}</p>
-                                            <p><strong>Địa chỉ:</strong> {{ $wardName }}, {{ $districtName }},
-                                                {{ $provinceName }}</p>
-                                            <p><strong>Địa chỉ giao hàng:</strong> {{ $order->address }}</p>
+                                            <p><strong>Địa chỉ:</strong> {{ $address }}</p>
+                                            <p><strong>Địa chỉ chi tiết:</strong> {{ $order->address }}</p>
                                             <p><strong>Số điện thoại:</strong> {{ $order->phone }}</p>
                                         </div>
                                     </div>
